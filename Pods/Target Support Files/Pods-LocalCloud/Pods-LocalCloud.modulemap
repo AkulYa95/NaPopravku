@@ -1,0 +1,6 @@
+framework module Pods_LocalCloud {
+  umbrella header "Pods-LocalCloud-umbrella.h"
+
+  export *
+  module * { export * }
+}

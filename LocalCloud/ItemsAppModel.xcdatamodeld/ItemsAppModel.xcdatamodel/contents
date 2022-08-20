@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="FileEntity" representedClassName="FileEntity" isAbstract="YES" syncable="YES" codeGenerationType="class">
+        <attribute name="contentItems" optional="YES" attributeType="Binary"/>
+        <attribute name="depthLevel" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fileName" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="ownerID" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="Binary"/>
+        <attribute name="url" optional="YES" attributeType="URI"/>
+    </entity>
+    <elements>
+        <element name="FileEntity" positionX="-63" positionY="-18" width="128" height="134"/>
+    </elements>
+</model>
