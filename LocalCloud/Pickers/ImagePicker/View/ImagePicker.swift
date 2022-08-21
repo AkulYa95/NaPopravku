@@ -1,69 +1,86 @@
 //
-//  ImagePicker.swift
+//  MediaPicker.swift
 //  LocalCloud
 //
 //  Created by Ярослав Акулов on 14.08.2022.
 //
 
 import SwiftUI
+import PhotosUI
 
-struct ImagePicker: UIViewControllerRepresentable {
+struct MediaPicker: UIViewControllerRepresentable {
+    
     @ObservedObject var viewModel: ImagePickerViewModel
     @Binding var imageURL: URL?
     @Binding var alertMessage: String
     @Binding var showAlert: Bool
-    @Environment(\.presentationMode) private var presentationMode
-    func makeUIViewController(context: Context) -> UIImagePickerController {
-        let picker = UIImagePickerController()
-        picker.mediaTypes = ["public.image", "public.movie", "kUTTypeLivePhoto"]
-        picker.allowsEditing = false
-        picker.delegate = context.coordinator
-        return picker
+
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var config = PHPickerConfiguration()
+        config.filter = .any(of: [.images, .videos])
+        config.selectionLimit = 1
+        config.preferredAssetRepresentationMode = .automatic
+        
+        let controller = PHPickerViewController(configuration: config)
+        controller.delegate = context.coordinator
+        return controller
     }
     
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-    
-    final class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-        let imagePicker: ImagePicker
-        init(imagePicker: ImagePicker) {
-            self.imagePicker = imagePicker
-        }
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {
         
-        func imagePickerController(_ picker: UIImagePickerController,
-                                   didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            var targetURL: URL?
-            if let image = info[.livePhoto] as? PHLivePhoto {
-                print(image)
-//                targetURL = url
-            }
-            if let url = info[.imageURL] as? URL {
-                print(url.lastPathComponent)
-                targetURL = url
-            } else if let url = info[.mediaURL] as? URL {
-                print(url.lastPathComponent)
-                targetURL = url
-            }
-            guard let targetURL = targetURL else { return }
-            guard imagePicker.viewModel.validateFileSize(targetURL) else {
-                imagePicker.alertMessage = "File size more then 20MB"
-                imagePicker.showAlert = true
-                return
-            }
-            guard imagePicker.viewModel.validateFileExtension(targetURL) else {
-                imagePicker.alertMessage = "Forbidden file extension"
-                imagePicker.showAlert = true
-                return
-            }
-            imagePicker.imageURL = targetURL
-            imagePicker.presentationMode.wrappedValue.dismiss()
-        }
-        
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            imagePicker.presentationMode.wrappedValue.dismiss()
-        }
     }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator(imagePicker: self)
+        Coordinator(self)
     }
+    
+    final class Coordinator: PHPickerViewControllerDelegate {
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            if !Thread.isMainThread {
+                DispatchQueue.main.async {
+                    self.picker(picker, didFinishPicking: results)
+                }
+                return
+            }
+            picker.dismiss(animated: true)
+            guard let provider = results.first?.itemProvider else { return }
+            guard provider.canLoadObject(ofClass: PHLivePhoto.self) == false else {
+                mediaPicker.alertMessage = "Forbidden extension (livePhoto)"
+                mediaPicker.showAlert = true
+                return
+            }
+            
+            provider.loadFileRepresentation(forTypeIdentifier: UTType.image.identifier) { url, _ in
+                DispatchQueue.main.async {
+                    guard let url = url else { return }
+                    guard self.mediaPicker.viewModel.validateFileSize(url) == true else {
+                        self.mediaPicker.alertMessage = "Oversize! More then 20MB"
+                        self.mediaPicker.showAlert = true
+                        return
+                    }
+                    self.mediaPicker.imageURL = url
+                }
+            }
+            
+            provider.loadFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { url, _ in
+                DispatchQueue.main.async {
+                    guard let url = url else { return }
+                    guard self.mediaPicker.viewModel.validateFileSize(url) == true else {
+                        self.mediaPicker.alertMessage = "Oversize! More then 20MB"
+                        self.mediaPicker.showAlert = true
+                        return
+                    }
+                    self.mediaPicker.imageURL = url
+                }
+            }
+        }
+        
+        var mediaPicker: MediaPicker
+        init(_ photoPicker: MediaPicker) {
+            self.mediaPicker = photoPicker
+        }
+    }
+    
+    typealias UIViewControllerType = PHPickerViewController
+    
 }
