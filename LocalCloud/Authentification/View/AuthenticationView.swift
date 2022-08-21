@@ -12,9 +12,6 @@ struct AuthenticationView: View {
     var body: some View {
         ZStack {
             VStack {
-                Text(viewModel.title)
-                    .foregroundColor(.white)
-                    .font(.title)
                 Spacer()
                 TextField(viewModel.emailPlaceholder, text: $viewModel.email)
                     .disableAutocorrection(true)

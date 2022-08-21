@@ -21,7 +21,7 @@ struct GridView: View {
                     ZStack {
                         Rectangle()
                             .frame(width: 100, height: 100)
-                            .foregroundColor(colors[number%4])
+                            .foregroundColor(colors[number % 4])
                             .cornerRadius(30)
                         Text("\(number)")
                             .foregroundColor(.white)

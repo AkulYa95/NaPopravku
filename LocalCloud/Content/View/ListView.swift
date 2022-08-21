@@ -9,8 +9,9 @@ import SwiftUI
 
 struct ListView: View {
     @ObservedObject var viewModel: ListViewViewModel
-    let image = Image(systemName: "folder")
-    func deleteIlem(at offsets: IndexSet) {
+    @FocusState var focusedItem: Focusable?
+    
+    private func deleteItem(at offsets: IndexSet) {
         offsets.forEach { index in
             let item = viewModel.items[index]
             viewModel.delete(item)
@@ -18,20 +19,56 @@ struct ListView: View {
     }
     var body: some View {
         List {
-            ForEach(viewModel.items, id: \.id) { item in
-                HStack {
-                    Image(systemName: "folder")
-                    Text(item.fileName ?? "error")
+            ForEach($viewModel.items, id: \.id) { $item in
+                Group {
+                    if item.fileType == .folder {
+                        NavigationLink(destination: ContentView(viewModel: ContentViewViewModel(currentUser: viewModel.user,
+                                                                                                parentFolder: item))) {
+                            HStack {
+                                Image(systemName: "folder")
+                                TextField(item.fileName, text: $item.fileName)
+                                    .truncationMode(.middle)
+                                    .focused($focusedItem, equals: .item(id: item.id.uuidString))
+                                    .disabled(!(viewModel.editableItem == .item(id: item.id.uuidString)))
+                                    .submitLabel(.done)
+                                    .onSubmit {
+                                        print("commit")
+                                        viewModel.rename(item)
+                                        viewModel.editableItem = .none
+                                        focusedItem = Focusable.none
+                                    }
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Image(systemName: "doc")
+                            TextField(item.fileName, text: $item.fileName)
+                                .truncationMode(.middle)
+                                .focused($focusedItem, equals: .item(id: item.id.uuidString))
+                                .disabled(!(viewModel.editableItem == .item(id: item.id.uuidString)))
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    print("commit")
+                                    viewModel.rename(item)
+                                    viewModel.editableItem = .none
+                                    focusedItem = Focusable.none
+                                }
+                        }
+                    }
+                }
+                .contextMenu {
+                    Button {
+                        viewModel.editableItem = .item(id: item.id.uuidString)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.focusedItem = .item(id: item.id.uuidString)
+                        }
+                    } label: {
+                        Label("Rename", systemImage: "pencil")
+                    }
                 }
             }
-            .onDelete(perform: deleteIlem)
+            .onDelete(perform: deleteItem)
         }
         .listStyle(.inset)
-    }
-}
-
-struct ListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ListView(viewModel: ListViewViewModel(items: []))
     }
 }

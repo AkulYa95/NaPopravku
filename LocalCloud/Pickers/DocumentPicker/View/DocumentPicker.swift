@@ -9,6 +9,10 @@ import SwiftUI
 
 struct DocumentPicker: UIViewControllerRepresentable {
     @ObservedObject var viewModel: DocumentPickerViewModel
+    @Binding var documentURL: URL?
+    @Binding var alertMessage: String
+    @Binding var showAlert: Bool
+    @Environment(\.presentationMode) private var presentationMode
     
     func makeCoordinator() -> Coordinator {
         return DocumentPicker.Coordinator(documentPicker: self)
@@ -43,6 +47,22 @@ struct DocumentPicker: UIViewControllerRepresentable {
                 print(error.localizedDescription)
             }
             print(url.fileSize)
+            print(url.pathExtension)
+            guard picker.viewModel.validateFileSize(url) else {
+                picker.alertMessage = "File size more then 20MB"
+                picker.showAlert = true
+                return
+            }
+            guard picker.viewModel.validateFileExtension(url) else {
+                picker.alertMessage = "Forbidden file extension"
+                picker.showAlert = true
+                return
+            }
+            picker.documentURL = url
+            picker.presentationMode.wrappedValue.dismiss()
+        }
+        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            picker.presentationMode.wrappedValue.dismiss()
         }
     }
 }

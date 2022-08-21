@@ -8,7 +8,7 @@
 import Foundation
 import UniformTypeIdentifiers
 
-class DocumentPickerViewModel: ObservableObject {
+class DocumentPickerViewModel: ObservableObject, PickerViewModelProtocol {
     let types: [UTType] = [
         UTType.png,
         UTType.message,

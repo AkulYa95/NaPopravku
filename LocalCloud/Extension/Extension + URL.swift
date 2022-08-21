@@ -19,14 +19,6 @@ extension URL {
     
     var fileSize: UInt64 {
         print(attributes)
-        return attributes?[.size] as? UInt64 ?? UInt64(2)
-    }
-    
-    var fileSizeString: String {
-        return ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .file)
-    }
-    
-    var creationDate: Date? {
-        return attributes?[.creationDate] as? Date
+        return attributes?[.size] as? UInt64 ?? UInt64(0)
     }
 }

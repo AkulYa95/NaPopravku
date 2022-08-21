@@ -12,20 +12,28 @@ struct ContentView: View {
     var body: some View {
         VStack {
             if viewModel.segmentedIndex == 0 {
-                ListView(viewModel: ListViewViewModel(items: viewModel.items))
+                ListView(viewModel: ListViewViewModel(parentFolder: viewModel.parentFolder,
+                                                      user: viewModel.currentUser,
+                                                      segmentedIndex: viewModel.segmentedIndex))
             } else {
                 GridView()
             }
         }
-        .navigationTitle("Documents")
         .onAppear(perform: {
             viewModel.getAllFiles()
         })
-        .sheet(isPresented: $viewModel.isShowingImagePicker, content: {
-            ImagePicker(viewModel: ImagePickerViewModel())
+        .navigationTitle(viewModel.folderName)
+        .sheet(isPresented: $viewModel.showImagePicker, content: {
+            ImagePicker(viewModel: ImagePickerViewModel(),
+                        imageURL: $viewModel.newFileURL,
+                        alertMessage: $viewModel.alertMessage,
+                        showAlert: $viewModel.isNeedAlert)
         })
-        .sheet(isPresented: $viewModel.isShowingDocumentPicker, content: {
-            DocumentPicker(viewModel: DocumentPickerViewModel())
+        .sheet(isPresented: $viewModel.showDocumentPicker, content: {
+            DocumentPicker(viewModel: DocumentPickerViewModel(),
+                           documentURL: $viewModel.newFileURL,
+                           alertMessage: $viewModel.alertMessage,
+                           showAlert: $viewModel.isNeedAlert)
         })
         .alert(isPresented: $viewModel.isNeedAlert, content: {
             Alert(title: Text(viewModel.alertMessage),
@@ -38,42 +46,27 @@ struct ContentView: View {
                     Menu {
                         Section {
                             Picker(selection: $viewModel.segmentedIndex, label: Text("ShownType")) {
-                                HStack {
-                                    Text("List")
-                                    Spacer()
-                                    Image(systemName: "list.dash")
-                                }.tag(0)
-                            
-                                HStack {
-                                    Text("Grid")
-                                    Image(systemName: "square.grid.2x2")
-                                }.tag(1)
+                                Label("List", systemImage: "list.dash").tag(0)
+                                Label("Grid", systemImage: "square.grid.2x2").tag(1)
                             }
                         }
                         Section {
-                            Button {
-                                viewModel.addFolder()
-                            } label: {
-                                HStack {
-                                Text("Add folder")
-                                    Image(systemName: "folder.badge.plus")
+                            if viewModel.isAllowAddFolder {
+                                Button {
+                                    viewModel.addFolder()
+                                } label: {
+                                    Label("Add folder", systemImage: "folder.badge.plus")
                                 }
                             }
                             Button {
                                 viewModel.openImagePicker()
                             } label: {
-                                HStack {
-                                Text("Add image")
-                                    Image(systemName: "photo.on.rectangle")
-                                }
+                                Label("Add image", systemImage: "photo.on.rectangle")
                             }
                             Button {
-                                viewModel.isShowingDocumentPicker.toggle()
+                                viewModel.openDocumentPicker()
                             } label: {
-                                HStack {
-                                Text("Add document")
-                                    Image(systemName: "doc.on.doc")
-                                }
+                                Label("Add document", systemImage: "doc.on.doc")
                             }
                         }
                         Section {
@@ -89,15 +82,6 @@ struct ContentView: View {
                     }
                 }
             }
-        }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            let context = CoreDataManager.shared.viewContext
-            ContentView(viewModel: ContentViewViewModel(currentUser: UserInfo()))
         }
     }
 }

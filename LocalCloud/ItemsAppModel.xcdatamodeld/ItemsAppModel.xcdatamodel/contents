@@ -6,10 +6,11 @@
         <attribute name="fileName" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="ownerID" optional="YES" attributeType="String"/>
+        <attribute name="parentId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="type" optional="YES" attributeType="Binary"/>
         <attribute name="url" optional="YES" attributeType="URI"/>
     </entity>
     <elements>
-        <element name="FileEntity" positionX="-63" positionY="-18" width="128" height="134"/>
+        <element name="FileEntity" positionX="-63" positionY="-18" width="128" height="149"/>
     </elements>
 </model>

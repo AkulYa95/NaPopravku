@@ -12,7 +12,8 @@ struct HomeView: View {
     var body: some View {
         Group {
             if viewModel.user.token != nil {
-                ContentView(viewModel: ContentViewViewModel(currentUser: viewModel.user))
+                ContentView(viewModel: ContentViewViewModel(currentUser: viewModel.user,
+                                                            parentFolder: viewModel.rootFolder))
             } else {
                 AuthenticationView(viewModel: AuthenticationViewViewModel(currentUser: viewModel.user))
             }
