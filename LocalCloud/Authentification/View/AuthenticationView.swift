@@ -15,6 +15,7 @@ struct AuthenticationView: View {
                 Spacer()
                 TextField(viewModel.emailPlaceholder, text: $viewModel.email)
                     .disableAutocorrection(true)
+                    .keyboardType(.emailAddress)
                 Divider().ignoresSafeArea(.keyboard)
                 SecureField(viewModel.passwordPlaceholder, text: $viewModel.password)
                 Spacer(minLength: 10)

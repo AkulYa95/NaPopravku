@@ -18,25 +18,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct LocalCloudApp: App {
-    @Environment(\.scenePhase) var scenePhase
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var user = UserInfo()
     var body: some Scene {
         WindowGroup {
             NavigationView {
                 HomeView(viewModel: HomeViewViewModel(user: user))
-            }
-        }
-        .onChange(of: scenePhase) { newValue in
-            switch newValue {
-            case .background:
-                print("background")
-            case .inactive:
-                print("inactive")
-            case .active:
-                print("active")
-            @unknown default:
-                break
             }
         }
     }

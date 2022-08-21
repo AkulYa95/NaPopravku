@@ -19,7 +19,6 @@ class ListViewViewModel: ObservableObject {
         parentFolder?.contentItems?.removeAll(where: { $0.id == item.id })
         items.removeAll(where: { $0.id == item.id })
         CoreDataManager.shared.delete(item, ownerID: ownerID)
-
     }
     
     func rename(_ item: FileItem) {

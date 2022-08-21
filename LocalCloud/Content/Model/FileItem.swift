@@ -22,7 +22,13 @@ struct FileItem: Identifiable, Codable {
     var contentItems: [FileItem]?
     var parentId: UUID?
     
-    init(fileType: ItemType, depthLevel: Int, id: UUID, ownerID: String?, url: URL?, fileName: String, parentId: UUID?) {
+    init(fileType: ItemType,
+         depthLevel: Int,
+         id: UUID,
+         ownerID: String?,
+         url: URL?,
+         fileName: String,
+         parentId: UUID?) {
         self.id = id
         self.depthLevel = depthLevel
         self.fileType = fileType

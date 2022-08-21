@@ -5,28 +5,24 @@
 //  Created by Ярослав Акулов on 13.08.2022.
 //
 
-import CoreData
 import Combine
 import FirebaseAuth
 
 class ContentViewViewModel: ObservableObject {
     
-    @Published var segmentedIndex: Int = UserDefaults.standard.integer(forKey: DefaultKeys.segmentedIndex)
+    @Published var segmentedIndex: Int = UserDefaults.standard.integer(forKey: DefaultKeys.segmentedIndex) {
+        didSet {
+            getAllFiles()
+        }
+    }
+    @Published var filterType: FilterType = .none
     @Published var showImagePicker = false
     @Published var showDocumentPicker = false
     
     @Published var isNeedAlert = false
     @Published var alertMessage = ""
-    @Published var parentFolder: FileItem? {
-        didSet {
-            print(parentFolder?.contentItems)
-        }
-    }
-    @Published var items: [FileItem] = [] {
-        didSet {
-            print(items)
-        }
-    }
+    @Published var parentFolder: FileItem?
+    @Published var items: [FileItem] = []
     
     @Published var newFileURL: URL?
     
@@ -61,6 +57,15 @@ class ContentViewViewModel: ObservableObject {
             parentFolder = CoreDataManager.shared.fetchContentItemsFrom(withOwnerID: id,
                                                                         depthLevel: depthLevel,
                                                                         id: parentID)
+        }
+        guard let contentItems = parentFolder?.contentItems else { return }
+        switch filterType {
+        case .onlyFolders:
+            parentFolder?.contentItems = contentItems.filter({ $0.fileType == .folder })
+        case .none:
+            break
+        case .onlyFiles:
+            parentFolder?.contentItems = contentItems.filter({ $0.fileType == .file })
         }
     }
     
@@ -147,6 +152,10 @@ class ContentViewViewModel: ObservableObject {
         $newFileURL
             .receive(on: RunLoop.main)
             .sink(receiveValue: { _ in self.addFile() })
+            .store(in: &cancellableSet)
+        $filterType
+            .receive(on: RunLoop.main)
+            .sink { _ in self.getAllFiles() }
             .store(in: &cancellableSet)
     }
 }

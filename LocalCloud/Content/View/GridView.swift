@@ -8,33 +8,79 @@
 import SwiftUI
 
 struct GridView: View {
-//    @ObservedObject var viewModel: GridViewViewModel
-    private var data: [Int] = Array(1...20)
-    private let colors: [Color] = [.red, .green, .blue, .yellow]
+    @ObservedObject var viewModel: ListViewViewModel
+    @FocusState var focusedItem: Focusable?
+
     private let adaptiveColumns = [
         GridItem(.adaptive(minimum: 100))
     ]
     var body: some View {
         ScrollView {
             LazyVGrid(columns: adaptiveColumns, spacing: 20) {
-                ForEach(data, id: \.self) { number in
-                    ZStack {
-                        Rectangle()
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(colors[number % 4])
-                            .cornerRadius(30)
-                        Text("\(number)")
-                            .foregroundColor(.white)
-                            .font(.system(size: 80, weight: .medium, design: .rounded))
+                ForEach($viewModel.items, id: \.id) { $item in
+                    Group {
+                        if item.fileType == .folder {
+                            NavigationLink(destination: ContentView(viewModel: ContentViewViewModel(currentUser: viewModel.user,
+                                                                                                    parentFolder: item))) {
+                                VStack {
+                                    Image(systemName: "folder")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(maxWidth: 50, maxHeight: 50)
+                                    TextField(item.fileName, text: $item.fileName)
+                                        .multilineTextAlignment(.center)
+                                        .truncationMode(.middle)
+                                        .focused($focusedItem, equals: .item(id: item.id.uuidString))
+                                        .disabled(!(viewModel.editableItem == .item(id: item.id.uuidString)))
+                                        .submitLabel(.done)
+                                        .onSubmit {
+                                            print("commit")
+                                            viewModel.rename(item)
+                                            viewModel.editableItem = .none
+                                            focusedItem = Focusable.none
+                                        }
+                                }
+                                
+                            }.buttonStyle(PlainButtonStyle())
+                        } else {
+                            VStack {
+                                Image(systemName: "doc")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: 50, maxHeight: 50)
+                                TextField(item.fileName, text: $item.fileName)
+                                    .multilineTextAlignment(.center)
+                                    .truncationMode(.middle)
+                                    .focused($focusedItem, equals: .item(id: item.id.uuidString))
+                                    .disabled(!(viewModel.editableItem == .item(id: item.id.uuidString)))
+                                    .submitLabel(.done)
+                                    .onSubmit {
+                                        print("commit")
+                                        viewModel.rename(item)
+                                        viewModel.editableItem = .none
+                                        focusedItem = Focusable.none
+                                    }
+                            }
+                        }
                     }
+                    .contextMenu {
+                        Button {
+                            viewModel.editableItem = .item(id: item.id.uuidString)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                self.focusedItem = .item(id: item.id.uuidString)
+                            }
+                        } label: {
+                            Label("Rename", systemImage: "pencil")
+                        }
+                        Button(role: .destructive) {
+                            viewModel.delete(item)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                    .padding(.horizontal)
                 }
             }
         }
-    }
-}
-
-struct GridView_Previews: PreviewProvider {
-    static var previews: some View {
-        GridView()
     }
 }

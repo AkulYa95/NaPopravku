@@ -1,4 +1,3 @@
-//
 //  ContentView.swift
 //  LocalCloud
 //
@@ -16,7 +15,9 @@ struct ContentView: View {
                                                       user: viewModel.currentUser,
                                                       segmentedIndex: viewModel.segmentedIndex))
             } else {
-                GridView()
+                GridView(viewModel: ListViewViewModel(parentFolder: viewModel.parentFolder,
+                                                      user: viewModel.currentUser,
+                                                      segmentedIndex: viewModel.segmentedIndex))
             }
         }
         .onAppear(perform: {
@@ -24,7 +25,7 @@ struct ContentView: View {
         })
         .navigationTitle(viewModel.folderName)
         .sheet(isPresented: $viewModel.showImagePicker, content: {
-            ImagePicker(viewModel: ImagePickerViewModel(),
+            MediaPicker(viewModel: ImagePickerViewModel(),
                         imageURL: $viewModel.newFileURL,
                         alertMessage: $viewModel.alertMessage,
                         showAlert: $viewModel.isNeedAlert)
@@ -48,6 +49,14 @@ struct ContentView: View {
                             Picker(selection: $viewModel.segmentedIndex, label: Text("ShownType")) {
                                 Label("List", systemImage: "list.dash").tag(0)
                                 Label("Grid", systemImage: "square.grid.2x2").tag(1)
+                            }
+                        }
+                        
+                        Section {
+                            Picker(selection: $viewModel.filterType, label: Text("Filter")) {
+                                Label("Folders", systemImage: "questionmark.folder").tag(FilterType.onlyFolders)
+                                Label("None", systemImage: "doc.on.clipboard.fill").tag(FilterType.none)
+                                Label("OnlyFiles", systemImage: "list.bullet.rectangle").tag(FilterType.onlyFiles)
                             }
                         }
                         Section {

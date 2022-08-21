@@ -20,7 +20,6 @@ extension PickerViewModelProtocol {
     }
     
     func validateFileExtension(_ url: URL) -> Bool {
-        var forbiddenExtensions = ["txt", "livephoto"]
         return url.pathExtension == "txt" ? false : true
     }
 }

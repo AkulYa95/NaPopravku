@@ -7,64 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "08A76DE7-0375-41D1-ACE8-BE37B3FBD33E"
+            uuid = "9E5F837B-951D-48E4-ADCA-7832066468EB"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "LocalCloud/Content/ViewModel/ContentViewViewModel.swift"
+            filePath = "LocalCloud/CoreDataManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "addFile()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "08A76DE7-0375-41D1-ACE8-BE37B3FBD33E - cd8c8f400881f2f5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "LocalCloud.ContentViewViewModel.addFile() -&gt; ()"
-                  moduleName = "LocalCloud"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/yaroslavakulov/Desktop/Develop/LocalCloud/LocalCloud/Content/ViewModel/ContentViewViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "111"
-                  endingLineNumber = "111"
-                  offsetFromSymbolStart = "712">
-               </Location>
-               <Location
-                  uuid = "08A76DE7-0375-41D1-ACE8-BE37B3FBD33E - cd8c8f400881f2f5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "LocalCloud.ContentViewViewModel.addFile() -&gt; ()"
-                  moduleName = "LocalCloud"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/yaroslavakulov/Desktop/Develop/LocalCloud/LocalCloud/Content/ViewModel/ContentViewViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "111"
-                  endingLineNumber = "111"
-                  offsetFromSymbolStart = "760">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E40DBFFD-F8F6-4EE0-ACEB-F5FC0D23FDE7"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "LocalCloud/Pickers/ImagePicker/View/ImagePicker.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
-            landmarkName = "imagePickerController(_:didFinishPickingMediaWithInfo:)"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "saveNewFile(_:ownerID:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

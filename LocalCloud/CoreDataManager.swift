@@ -30,7 +30,6 @@ struct CoreDataManager {
         guard viewContext.hasChanges else { return }
         do {
             try viewContext.save()
-            print("save")
             completion(nil)
         } catch {
             completion(error)
@@ -48,7 +47,14 @@ struct CoreDataManager {
             let newItemsData = try? JSONEncoder().encode(entityItems)
             rootEntity.contentItems = newItemsData
             save()
-            print("delete")
+            return
+        }
+        if let index = entityItems.firstIndex(where: { $0.id == item.parentId }),
+           let finalIndex = entityItems[index].contentItems?.firstIndex(where: { $0.id == item.id }) {
+            entityItems[index].contentItems?.remove(at: finalIndex)
+            let newItemsData = try? JSONEncoder().encode(entityItems)
+            rootEntity.contentItems = newItemsData
+            save()
             return
         }
     }
@@ -61,6 +67,13 @@ struct CoreDataManager {
               }
         if rootEntity.id == item.parentId {
             entityItems.insert(item, at: 0)
+            let newItemsData = try? JSONEncoder().encode(entityItems)
+            rootEntity.contentItems = newItemsData
+            save()
+            return
+        }
+        if let index = entityItems.firstIndex(where: { $0.id == item.parentId }) {
+            entityItems[index].contentItems?.insert(item, at: 0)
             let newItemsData = try? JSONEncoder().encode(entityItems)
             rootEntity.contentItems = newItemsData
             save()
@@ -98,15 +111,14 @@ struct CoreDataManager {
             save()
             return
         }
-//        if let index = entityItems.firstIndex(where: { $0.id == item.parentId }),
-//           let folderItems = entityItems[index].contentItems,
-//           let itemIndex = folderItems.firstIndex(where: { $0.id == item.id }) {
-//            folderItems[itemIndex].fileName = item.fileName
-//            let newItemsData = try? JSONEncoder().encode(entityItems)
-//            rootEntity.contentItems = newItemsData
-//            save()
-//            return
-//        }
+        if let index = entityItems.firstIndex(where: { $0.id == item.parentId }),
+           let finalIndex = entityItems[index].contentItems?.firstIndex(where: { $0.id == item.id }) {
+            entityItems[index].contentItems?[finalIndex].fileName = item.fileName
+            let newItemsData = try? JSONEncoder().encode(entityItems)
+            rootEntity.contentItems = newItemsData
+            save()
+            return
+        }
     }
     
     func fetchRootFolder(withOwnerID ownerID: String) -> FileEntity? {

@@ -46,8 +46,6 @@ struct DocumentPicker: UIViewControllerRepresentable {
             } catch {
                 print(error.localizedDescription)
             }
-            print(url.fileSize)
-            print(url.pathExtension)
             guard picker.viewModel.validateFileSize(url) else {
                 picker.alertMessage = "File size more then 20MB"
                 picker.showAlert = true
