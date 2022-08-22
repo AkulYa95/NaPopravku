@@ -70,12 +70,9 @@ class AuthenticationViewViewModel: ObservableObject {
                 self.isNeedAlert.toggle()
                 return
             }
-
-            self.currentUser.getToken { error in
-                guard error == nil else { return }
-                self.currentUser.userID = result?.user.uid
-                self.currentUser.email = result?.user.email
-            }
+            self.currentUser.userID = result?.user.uid
+            self.currentUser.email = result?.user.email
+            self.currentUser.getToken()
         }
     }
     
