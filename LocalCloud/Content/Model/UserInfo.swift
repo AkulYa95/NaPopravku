@@ -20,7 +20,7 @@ class UserInfo: ObservableObject {
         return auth.currentUser?.email
     }()
     
-    @Published var token: String?
+    @Published var token: String? 
     
     func getToken(completion: @escaping (Error?) -> Void = { _ in }) {
         let auth = Auth.auth()

@@ -6,12 +6,15 @@
 //
 
 import Foundation
+import Combine
 
 class HomeViewViewModel: ObservableObject {
     
     @Published var user: UserInfo
     @Published var rootFolder: FileItem?
     @Published var segmentedIndex: Int = UserDefaults.standard.integer(forKey: DefaultKeys.segmentedIndex)
+    
+    private var cancellableSet: Set<AnyCancellable> = []
     
     func fetchUser() {
         user.getToken { error in
@@ -52,5 +55,9 @@ class HomeViewViewModel: ObservableObject {
 
     init(user: UserInfo) {
         self.user = user
+        self.user.$token
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { _ in self.getRootFolder() })
+            .store(in: &cancellableSet)
     }
 }
